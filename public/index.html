@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preflight Doctor — Agent Games handshake lab</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 860px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; line-height: 1.5; }
+  h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; margin-top: 2rem; }
+  .banner { background: #fff7e6; border: 1px solid #e6b800; padding: 0.8rem 1rem; border-radius: 6px; }
+  .panel { border: 1px solid #ccc; border-radius: 6px; padding: 1rem; margin-top: 1rem; }
+  label { display: block; font-weight: 600; margin-top: 0.6rem; }
+  textarea, input[type=text] { width: 100%; box-sizing: border-box; font-family: ui-monospace, monospace; font-size: 0.9rem; padding: 0.4rem; }
+  textarea { min-height: 4.5rem; }
+  button { margin-top: 0.7rem; padding: 0.45rem 1rem; font-size: 0.95rem; cursor: pointer; }
+  pre { background: #f4f4f4; padding: 0.7rem; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+  .pass { color: #0a6b0a; font-weight: 700; } .fail { color: #a00; font-weight: 700; }
+  .example { border-left: 3px solid #888; padding-left: 0.8rem; margin-top: 1rem; }
+  .example button { margin-top: 0.3rem; }
+  code { background: #f0f0f0; padding: 0 0.25rem; border-radius: 3px; }
+  footer { margin-top: 2.5rem; font-size: 0.85rem; color: #666; }
+</style>
+</head>
+<body>
+<h1>Preflight Doctor</h1>
+<p>Sign, verify, and debug the Agent Games handshake — HMAC-SHA256, lowercase hex, no prefix, over the <em>exact raw body bytes</em>, in the <code>x-agent-games-signature</code> header. The preflight response must be exactly <code>{ok: true, protocolVersion: 'v1'}</code>.</p>
+
+<div class="banner">
+<strong>Honest scope.</strong> This is an educational demo. It never calls the real platform, never stores anything, and never logs what you paste. But it <em>is</em> a hosted server: whatever you paste is sent to this demo server and processed in memory. <strong>Use a disposable test secret — never your real one.</strong> Inputs are UTF-8 text; a text box cannot represent arbitrary raw bytes.
+</div>
+
+<div class="panel" id="sign-panel">
+<h2>1. Sign</h2>
+<label for="sign-secret">Secret (UTF-8)</label>
+<input type="text" id="sign-secret" autocomplete="off" spellcheck="false" placeholder="demo-secret-do-not-use-for-real">
+<label for="sign-body">Raw body bytes (exact text to sign)</label>
+<textarea id="sign-body" spellcheck="false" placeholder='{"ok":true}'></textarea>
+<button id="sign-btn">Sign</button>
+<pre id="sign-out" aria-live="polite"></pre>
+</div>
+
+<div class="panel" id="verify-panel">
+<h2>2. Verify</h2>
+<label for="verify-secret">Secret (UTF-8)</label>
+<input type="text" id="verify-secret" autocomplete="off" spellcheck="false">
+<label for="verify-body">Raw body bytes</label>
+<textarea id="verify-body" spellcheck="false"></textarea>
+<label for="verify-sig">Claimed signature</label>
+<input type="text" id="verify-sig" autocomplete="off" spellcheck="false" placeholder="64 lowercase hex chars">
+<button id="verify-btn">Verify</button>
+<pre id="verify-out" aria-live="polite"></pre>
+</div>
+
+<div class="panel" id="shape-panel">
+<h2>3. Preflight shape check</h2>
+<label for="shape-text">Response JSON</label>
+<textarea id="shape-text" spellcheck="false" placeholder='{"ok": true, "protocolVersion": "v1"}'></textarea>
+<button id="shape-btn">Check shape</button>
+<pre id="shape-out" aria-live="polite"></pre>
+</div>
+
+<h2>Worked examples</h2>
+<div id="examples"><p>Loading…</p></div>
+
+<h2>RFC 4231 vectors</h2>
+<p>The server recomputes the published HMAC-SHA256 test vectors on demand. If any fails, the crypto path is broken — trust nothing else on this page.</p>
+<button id="vectors-btn">Run vectors</button>
+<pre id="vectors-out" aria-live="polite"></pre>
+
+<footer>
+Preflight Doctor 1.0.0 — zero dependencies, Node built-ins only. Body cap 64 KB. A mismatch diagnostic names a <em>possible</em> cause: a mismatch alone cannot prove what bytes or secret the sender used.
+</footer>
+<script src="/app.js"></script>
+</body>
+</html>
